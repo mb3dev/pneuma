@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PNEUMANAUTS — C. J. W. Armstrong</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <style>
   :root {
     --void: #03060a;
@@ -25,7 +25,7 @@
 
   body {
     background:
-      radial-gradient(circle at 50% -8%, rgba(126,255,196,0.08), transparent 40%),
+      radial-gradient(circle at 50% -10%, rgba(126,255,196,0.1), transparent 43%),
       linear-gradient(180deg, #02050a 0%, #03060a 45%, #04090f 100%);
     color: var(--ghost);
     font-family: 'Space Mono', monospace;
@@ -39,7 +39,7 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
     pointer-events: none;
     z-index: 9999;
-    opacity: 0.45;
+    opacity: 0.35;
   }
 
   .hero {
@@ -50,7 +50,7 @@
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    padding: 2rem;
+    padding: 1.5rem 2rem 4rem;
   }
 
   .stars {
@@ -82,11 +82,12 @@
   .lambert {
     --parallax: 0px;
     position: absolute;
-    top: 8%;
+    top: 6%;
     left: 50%;
     transform: translateX(-50%) translateY(var(--parallax));
-    width: 320px;
-    height: 320px;
+    width: 300px;
+    height: 300px;
+    opacity: 0.85;
     animation: lambert-pulse 8s ease-in-out infinite, lambert-drift 20s ease-in-out infinite;
   }
 
@@ -105,59 +106,97 @@
 
   .lambert-glow-ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; animation: lambert-ring 8s ease-in-out infinite; }
   .lambert-glow-ring:nth-child(1) { width: 160px; height: 160px; background: radial-gradient(circle, rgba(126,255,196,0.25) 0%, transparent 70%); }
-  .lambert-glow-ring:nth-child(2) { width: 240px; height: 240px; background: radial-gradient(circle, rgba(126,255,196,0.1) 0%, transparent 70%); animation-delay: -2s; }
-  .lambert-glow-ring:nth-child(3) { width: 320px; height: 320px; background: radial-gradient(circle, rgba(126,255,196,0.05) 0%, transparent 70%); animation-delay: -4s; }
+  .lambert-glow-ring:nth-child(2) { width: 230px; height: 230px; background: radial-gradient(circle, rgba(126,255,196,0.1) 0%, transparent 70%); animation-delay: -2s; }
+  .lambert-glow-ring:nth-child(3) { width: 300px; height: 300px; background: radial-gradient(circle, rgba(126,255,196,0.05) 0%, transparent 70%); animation-delay: -4s; }
 
-  @keyframes lambert-pulse { 0%, 100% { opacity: 0.9; } 50% { opacity: 1; } }
-  @keyframes lambert-drift { 0%, 100% { margin-top: 0; } 50% { margin-top: -12px; } }
+  @keyframes lambert-pulse { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; } }
+  @keyframes lambert-drift { 0%, 100% { margin-top: 0; } 50% { margin-top: -10px; } }
   @keyframes lambert-rotate { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
   @keyframes lambert-ring { 0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); } 50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); } }
 
-  .horizon { position: absolute; bottom: 0; left: 0; right: 0; height: 35%; background: linear-gradient(to top,#0a1a0e 0%,#0d2215 15%,#061208 40%,transparent 100%); }
+  .horizon { position: absolute; bottom: 0; left: 0; right: 0; height: 35%; background: linear-gradient(to top,#0a1a0e 0%,#0d2215 15%,#061208 40%,transparent 100%); z-index: 1; }
   .horizon::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,transparent 0%,rgba(126,255,196,0.15) 20%,rgba(126,255,196,0.4) 50%,rgba(126,255,196,0.15) 80%,transparent 100%); }
-  .highway { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 35%; background: linear-gradient(to top,rgba(126,255,196,0.08) 0%,transparent 100%); clip-path: polygon(35% 100%, 65% 100%, 100% 0%, 0% 0%); }
+  .highway { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 64px; height: 26%; background: linear-gradient(to top,rgba(126,255,196,0.1) 0%,transparent 100%); clip-path: polygon(35% 100%, 65% 100%, 100% 0%, 0% 0%); z-index: 1; opacity: 0.6; }
 
   .title-block {
     position: relative;
     z-index: 10;
     text-align: center;
-    margin-top: 180px;
-    padding: 2rem 2.4rem;
+    margin-top: 72px;
+    max-width: 1100px;
+    width: min(96vw, 1100px);
+    padding: 1.5rem 2rem 1.8rem;
     border: 1px solid rgba(126,255,196,0.15);
-    background: linear-gradient(180deg, rgba(6,14,22,0.72), rgba(6,14,22,0.28));
-    backdrop-filter: blur(4px);
-    box-shadow: 0 24px 50px rgba(0,0,0,0.35), inset 0 0 30px rgba(126,255,196,0.08);
-    animation: fade-up 1.4s ease both;
+    background: linear-gradient(180deg, rgba(6,14,22,0.72), rgba(6,14,22,0.32));
+    backdrop-filter: blur(3px);
+    box-shadow: 0 18px 45px rgba(0,0,0,0.32), inset 0 0 20px rgba(126,255,196,0.08);
+    animation: fade-up 1.3s ease both;
   }
 
-  .eyebrow { font-size: 0.62rem; letter-spacing: 0.38em; color: var(--lambert); text-transform: uppercase; margin-bottom: 1.2rem; opacity: 0.8; }
+  .eyebrow {
+    font-size: 0.68rem;
+    letter-spacing: 0.34em;
+    color: var(--lambert);
+    text-transform: uppercase;
+    margin-bottom: 0.9rem;
+    opacity: 0.9;
+  }
 
   .main-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(5.5rem, 18vw, 14rem);
-    line-height: 0.88;
-    letter-spacing: 0.04em;
+    font-size: clamp(4.3rem, 14.5vw, 11rem);
+    line-height: 0.9;
+    letter-spacing: 0.035em;
     color: var(--white);
-    text-shadow: 0 0 80px rgba(126,255,196,0.2), 0 0 160px rgba(126,255,196,0.08), 2px 2px 0 rgba(0,0,0,0.6);
+    text-shadow: 0 0 60px rgba(126,255,196,0.18), 0 0 100px rgba(126,255,196,0.08), 1px 1px 0 rgba(0,0,0,0.5);
     white-space: nowrap;
   }
 
   .main-title span {
     display: inline;
     color: var(--lambert);
-    text-shadow: 0 0 40px rgba(126,255,196,0.6), 0 0 80px rgba(126,255,196,0.3), 0 0 120px rgba(126,255,196,0.15);
+    text-shadow: 0 0 35px rgba(126,255,196,0.55), 0 0 60px rgba(126,255,196,0.24);
     animation: title-flicker 12s ease-in-out infinite;
   }
 
-  @keyframes title-flicker { 0%, 94%, 96%, 98%, 100% { opacity: 1; } 95%, 97% { opacity: 0.88; } }
-  .author { font-family: 'IM Fell English', serif; font-style: italic; font-size: clamp(1rem, 2.5vw, 1.4rem); color: var(--prairie); letter-spacing: 0.06em; margin-top: 1.2rem; opacity: 0.9; }
-  .tagline { font-size: clamp(0.6rem, 1.5vw, 0.72rem); color: var(--smoke); letter-spacing: 0.2em; text-transform: uppercase; margin-top: 1.4rem; line-height: 1.8; }
-  @keyframes fade-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes title-flicker { 0%, 94%, 96%, 98%, 100% { opacity: 1; } 95%, 97% { opacity: 0.9; } }
 
-  .scroll-hint { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.5rem; z-index: 10; animation: fade-up 2s 1.5s both; }
-  .scroll-hint span { font-size: 0.52rem; letter-spacing: 0.3em; color: var(--lambert-dim); text-transform: uppercase; }
-  .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, var(--lambert-dim), transparent); animation: scroll-pulse 2s ease-in-out infinite; }
-  @keyframes scroll-pulse { 0%, 100% { opacity: 0.4; transform: scaleY(1); } 50% { opacity: 1; transform: scaleY(1.1); } }
+  .author {
+    font-size: clamp(0.78rem, 1.9vw, 1rem);
+    color: var(--prairie);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 1rem;
+    opacity: 0.95;
+  }
+
+  .tagline {
+    font-family: 'IM Fell English', serif;
+    font-size: clamp(1rem, 2.2vw, 1.2rem);
+    color: #afbdd0;
+    margin-top: 1rem;
+    line-height: 1.55;
+    letter-spacing: 0.02em;
+  }
+
+  @keyframes fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 1.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    z-index: 2;
+    animation: fade-up 2s 1.2s both;
+    opacity: 0.75;
+  }
+  .scroll-hint span { font-size: 0.5rem; letter-spacing: 0.3em; color: var(--lambert-dim); text-transform: uppercase; }
+  .scroll-line { width: 1px; height: 24px; background: linear-gradient(to bottom, var(--lambert-dim), transparent); animation: scroll-pulse 2s ease-in-out infinite; }
+  @keyframes scroll-pulse { 0%, 100% { opacity: 0.4; transform: scaleY(1); } 50% { opacity: 1; transform: scaleY(1.08); } }
 
   .datestamp { background: var(--ink); border-top: 1px solid rgba(126,255,196,0.12); border-bottom: 1px solid rgba(126,255,196,0.12); padding: 1.2rem 2rem; display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; }
   .datestamp-item { font-size: 0.6rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--lambert); opacity: 0.7; }
@@ -212,9 +251,12 @@
   .reveal.visible { opacity: 1; transform: none; }
 
   @media (max-width: 720px) {
-    .title-block { margin-top: 140px; padding: 1.5rem 1rem; }
-    .main-title { letter-spacing: 0.02em; }
-    .tagline { letter-spacing: 0.12em; }
+    .hero { padding-top: 1.2rem; }
+    .title-block { margin-top: 44px; padding: 1.2rem 0.9rem 1.4rem; }
+    .eyebrow { letter-spacing: 0.22em; font-size: 0.55rem; }
+    .main-title { font-size: clamp(3rem, 17.4vw, 5.2rem); letter-spacing: 0.02em; }
+    .author { letter-spacing: 0.14em; }
+    .tagline { font-size: 0.95rem; }
     .pull-quote-wrap, .section, .characters, .excerpt-wrap, .cta-section { padding-left: 1.25rem; padding-right: 1.25rem; }
   }
 
@@ -235,9 +277,9 @@
 
   <div class="title-block">
     <p class="eyebrow">July 1976 &nbsp;·&nbsp; Saskatchewan, Canada &nbsp;·&nbsp; Seven Years Since the Arrival</p>
-    <h1 class="main-title">PNEUMO<span>NAUTS</span></h1>
-    <p class="author">a novel by C. J. W. Armstrong</p>
-    <p class="tagline">Three teenagers. A stolen van. Forty alien spacecraft.<br>And three days until everything ends.</p>
+    <h1 class="main-title">PNEUMA<span>NAUTS</span></h1>
+    <p class="author">C. J. W. Armstrong · Novel</p>
+    <p class="tagline">Three runaways. One stolen van. Forty silent objects in orbit.<br>Three days left before the sky closes.</p>
   </div>
 
   <div class="scroll-hint"><span>Scroll</span><div class="scroll-line"></div></div>
