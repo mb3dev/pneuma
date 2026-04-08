@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Spectrum • Shared Curiosity</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    :root { --accent: #ff66cc; }
+    body {
+        margin:0; padding:0;
+        background: linear-gradient(180deg, #1a0022, #330044);
+        color:#eee;
+        font-family:system-ui, sans-serif;
+        min-height:100vh;
+    }
+    header {
+        background:rgba(0,0,0,0.5);
+        padding:20px;
+        text-align:center;
+        border-bottom:3px solid var(--accent);
+    }
+    h1 { margin:0; font-size:1.9em; }
+    .container { max-width:960px; margin:0 auto; padding:20px; }
+    .section { background:rgba(255,255,255,0.08); border-radius:16px; padding:20px; margin-bottom:25px; }
+    .question { margin-bottom:25px; }
+    label { display:block; margin-bottom:8px; font-weight:500; }
+    .slider-container { display:flex; align-items:center; gap:12px; }
+    input[type="range"] { flex:1; accent-color:var(--accent); }
+    .value { font-size:1.2em; width:42px; text-align:right; font-weight:600; }
+    button {
+        background:var(--accent);
+        color:white;
+        border:none;
+        padding:16px 28px;
+        font-size:1.1em;
+        border-radius:12px;
+        cursor:pointer;
+        width:100%;
+        margin-top:15px;
+    }
+    button:hover { filter:brightness(1.1); }
+    input[type="text"] {
+        width:100%; padding:14px; background:#2a0044; border:1px solid #660099; border-radius:8px; color:white;
+    }
+    .results { display:none; }
+    .overlap { background:rgba(255,102,204,0.15); border:1px solid var(--accent); padding:18px; border-radius:12px; margin-bottom:15px; }
+    .map { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:15px; }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Spectrum</h1>
+    <p>A quiet space to explore curiosity together</p>
+</header>
+
+<div class="container">
+
+    <div id="intro">
+        <h2 style="text-align:center;margin:30px 0 10px;">How this works</h2>
+        <p style="text-align:center;max-width:620px;margin:0 auto 30px;">
+            We each answer privately.<br>
+            Only the things we both feel similarly about will be shown.
+        </p>
+        <button onclick="startSurvey()">Begin</button>
+    </div>
+
+    <div id="survey" style="display:none;"></div>
+
+    <div id="results" class="results">
+        <h2 style="text-align:center;">Your Shared Spectrum</h2>
+        <div id="spectrumMap" class="map"></div>
+        
+        <div style="margin-top:30px;text-align:center;">
+            <button onclick="exportFullLog()">Export Full Private Log (for me only)</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ==================== CATEGORIES ====================
+const categories = [
+    {id:"attention",   title:"Feeling strongly desired or noticed by someone new"},
+    {id:"exhibition",  title:"Light risk of being seen or watched"},
+    {id:"involving",   title:"Involving another person (general)"},
+    {id:"bdsm",        title:"Light BDSM or power play elements"},
+    {id:"taboo",       title:"Exploring something a little taboo or forbidden"},
+    {id:"bisexual",    title:"Bisexual or same-gender curiosity"},
+    {id:"proximity",   title:"Proximity / how close the other person is"}
+];
+
+let myAnswers = {};
+
+// Simple reversible obfuscation (not real encryption, but enough to hide plain text)
+function obfuscate(data) {
+    let str = JSON.stringify(data);
+    let encoded = btoa(str);
+    return encoded.split('').reverse().join('').replace(/=/g,'');
+}
+
+function deobfuscate(code) {
+    try {
+        let cleaned = code.replace(/[^A-Za-z0-9+/]/g,'');
+        let reversed = cleaned.split('').reverse().join('');
+        let json = atob(reversed);
+        return JSON.parse(json);
+    } catch(e) { return null; }
+}
+
+function startSurvey() {
+    document.getElementById('intro').style.display = 'none';
+    document.getElementById('survey').style.display = 'block';
+    renderSurvey();
+}
+
+function renderSurvey() {
+    let html = `<h2 style="margin-bottom:20px;">Your Private Answers</h2>`;
+    
+    categories.forEach(cat => {
+        html += `
+        <div class="section">
+            <h3>${cat.title}</h3>
+            <div class="question">
+                <label>How appealing is this idea?</label>
+                <div class="slider-container">
+                    <input type="range" min="0" max="10" value="5" id="${cat.id}-appeal">
+                    <span class="value" id="${cat.id}-appeal-val">5</span>
+                </div>
+            </div>
+            <div class="question">
+                <label>How far would you be willing to go?</label>
+                <div class="slider-container">
+                    <input type="range" min="0" max="10" value="3" id="${cat.id}-intensity">
+                    <span class="value" id="${cat.id}-intensity-val">3</span>
+                </div>
+            </div>
+        </div>`;
+    });
+
+    html += `
+    <div class="section">
+        <h3>Specific People (optional – private)</h3>
+        <p style="font-size:0.9em;opacity:0.7;">List any specific people you might be open to involving. Only matching names will be shown.</p>
+        <input type="text" id="peopleInput" placeholder="e.g. Josh, Riley, friend from work..." style="width:100%;padding:14px;border-radius:8px;background:#2a0044;border:1px solid #660099;color:white;">
+    </div>`;
+
+    html += `<button onclick="finishSurvey()">Finish & Get My Code</button>`;
+    document.getElementById('survey').innerHTML = html;
+
+    // Live slider updates
+    categories.forEach(cat => {
+        const a = document.getElementById(cat.id+'-appeal');
+        const i = document.getElementById(cat.id+'-intensity');
+        if (a) a.oninput = () => document.getElementById(cat.id+'-appeal-val').textContent = a.value;
+        if (i) i.oninput = () => document.getElementById(cat.id+'-intensity-val').textContent = i.value;
+    });
+}
+
+function finishSurvey() {
+    myAnswers = {};
+    categories.forEach(cat => {
+        const appeal = parseInt(document.getElementById(cat.id+'-appeal').value) || 5;
+        const intensity = parseInt(document.getElementById(cat.id+'-intensity').value) || 3;
+        myAnswers[cat.id] = {appeal, intensity};
+    });
+
+    const peopleStr = document.getElementById('peopleInput').value.trim();
+    myAnswers.people = peopleStr ? peopleStr.split(',').map(p=>p.trim()).filter(Boolean) : [];
+
+    const code = obfuscate(myAnswers);
+
+    alert(`Your code is:\n\n${code}\n\nSend this code to your partner.\nThey will enter it to see the shared results.`);
+    showResults(myAnswers, code);
+}
+
+function showResults(myData, myCode) {
+    document.getElementById('survey').style.display = 'none';
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('spectrumMap').innerHTML = `
+        <p style="text-align:center;opacity:0.8;">Enter your partner's code below to see the shared Spectrum</p>
+        <input type="text" id="partnerCodeInput" placeholder="Paste partner's code here" style="width:100%;padding:14px;margin:15px 0;border-radius:8px;background:#2a0044;border:1px solid #660099;color:white;">
+        <button onclick="loadPartnerCode('${myCode}')">Compare & Show Overlaps</button>
+    `;
+}
+
+function loadPartnerCode(myCode) {
+    const input = document.getElementById('partnerCodeInput').value.trim();
+    if (!input) return alert("Please enter the partner's code");
+
+    const partnerData = deobfuscate(input);
+    if (!partnerData) return alert("Invalid code. Please check and try again.");
+
+    // Show shared overlaps
+    let html = `<h3 style="text-align:center;margin-bottom:20px;">Shared Spectrum</h3>`;
+    categories.forEach(cat => {
+        const mine = myAnswers[cat.id] || {appeal:0, intensity:0};
+        const theirs = partnerData[cat.id] || {appeal:0, intensity:0};
+        const overlap = Math.min(mine.appeal, theirs.appeal) + Math.min(mine.intensity, theirs.intensity);
+        if (overlap >= 8) {
+            html += `
+            <div class="overlap">
+                <strong>${cat.title}</strong><br>
+                Your appeal: ${mine.appeal} | Their appeal: ${theirs.appeal}<br>
+                Your intensity: ${mine.intensity} | Their intensity: ${theirs.intensity}
+            </div>`;
+        }
+    });
+
+    document.getElementById('spectrumMap').innerHTML = html;
+}
+
+// Private full log export (for you)
+function exportFullLog() {
+    const log = JSON.stringify(myAnswers, null, 2);
+    const blob = new Blob([log], {type:'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'spectrum-full-private-log.txt';
+    a.click();
+}
+</script>
+</body>
+</html>
